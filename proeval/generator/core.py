@@ -405,6 +405,8 @@ def get_posterior_embedding(
         return posterior_mean.detach().cpu().numpy(), posterior_cov.detach().cpu().numpy()
     else:
         K_test_diag = torch.ones(phi_test_t.shape[0], device=device)
+        if kernel_type == "linear":
+            K_test_diag = torch.sum(phi_test_t ** 2, dim=1)
         v = torch.cholesky_solve(K_test_train.t(), L)
         posterior_var = K_test_diag - torch.sum(K_test_train * v.t(), dim=1)
         posterior_var = torch.clamp(posterior_var, min=1e-10)
