@@ -48,6 +48,21 @@ class _DummyLinearEncoder:
         yield self._anchor
 
 
+def test_linear_encoder_marginal_variance_matches_covariance():
+    torch = pytest.importorskip("torch")
+    from proeval.generator.core import get_posterior_embedding
+
+    phi = np.array([[0.0, 0.0], [0.2, -0.2], [1.0, -1.0]], dtype=np.float32)
+    args = (
+        phi[[2]], np.array([1.0]), phi, 0.3, [2],
+        np.full(3, 0.5), _DummyLinearEncoder(torch),
+    )
+    _, variance = get_posterior_embedding(*args)
+    _, covariance = get_posterior_embedding(*args, full_cov=True)
+
+    np.testing.assert_allclose(variance, np.diag(covariance), atol=1e-6)
+
+
 def _run_active(kind, budget, n_init=0):
     features, labels, prior_mean, prior_cov = _synthetic_case()
     np.random.seed(7)
