@@ -1,0 +1,22 @@
+name: NEXUS Actions Smoke
+
+on:
+  push:
+    branches:
+      - diagnostic/nexus-actions-smoke
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Runtime proof
+        run: |
+          echo "NEXUS execution lane smoke"
+          uname -a
+          python --version
+          node --version
